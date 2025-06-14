@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "JuanBlanco.solidity",
+    "GitHub.copilot",
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "bradlc.vscode-tailwindcss",
+    "dsznajder.es7-react-js-snippets",
+    "ms-vscode.vscode-typescript-next"
+  ]
+}

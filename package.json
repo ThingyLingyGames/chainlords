@@ -1,0 +1,37 @@
+{
+  "name": "chainlords",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ChainLords: Galactic Empires - Cross-chain idle strategy Web3 game",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev:all",
+    "dev:all": "concurrently \"npm run dev:blockchain\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:blockchain": "cd packages/contracts && npm run node",
+    "dev:backend": "cd packages/backend && npm run dev",
+    "dev:frontend": "cd packages/frontend && npm run dev",
+    "build": "lerna run build",
+    "test": "lerna run test",
+    "test:contracts": "cd packages/contracts && npm test",
+    "test:backend": "cd packages/backend && npm test",
+    "test:frontend": "cd packages/frontend && npm test",
+    "lint": "lerna run lint",
+    "clean": "lerna clean && rm -rf node_modules",
+    "deploy:local": "cd packages/contracts && npm run deploy:local",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "concurrently": "^8.2.2",
+    "lerna": "^8.0.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: chainlords-postgres
+    environment:
+      POSTGRES_DB: chainlords
+      POSTGRES_USER: chainlords
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-chainlords_dev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chainlords"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:7-jammy
+    container_name: chainlords-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: chainlords
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-chainlords_dev}
+      MONGO_INITDB_DATABASE: chainlords
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./scripts/init-mongo.js:/docker-entrypoint-initdb.d/init.js:ro
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: chainlords-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-chainlords_dev}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  hardhat:
+    build:
+      context: ./packages/contracts
+      dockerfile: Dockerfile
+    container_name: chainlords-hardhat
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./packages/contracts:/app
+      - /app/node_modules
+    command: npx hardhat node --hostname 0.0.0.0
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:
