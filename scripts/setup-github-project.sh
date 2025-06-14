@@ -328,15 +328,77 @@ Create a detailed README that helps new developers and users understand the proj
 "MVP - Local Demo"
 
 echo -e "\n${BLUE}Creating project board...${NC}"
-print_info "Please create the project board manually at:"
-print_info "https://github.com/orgs/$OWNER/projects/new"
-print_info ""
-print_info "Recommended columns:"
-print_info "- 📋 Backlog"
-print_info "- 🎯 Sprint Ready" 
-print_info "- 🚀 In Progress"
-print_info "- 👀 In Review"
-print_info "- ✅ Done"
+
+# Create the project using GitHub CLI
+PROJECT_OUTPUT=$(gh project create \
+    --owner "$OWNER" \
+    --title "$PROJECT_TITLE" \
+    --format json 2>&1)
+
+if [[ $? -eq 0 ]]; then
+    PROJECT_NUMBER=$(echo "$PROJECT_OUTPUT" | jq -r '.number')
+    PROJECT_ID=$(echo "$PROJECT_OUTPUT" | jq -r '.id')
+    print_status "Created project: $PROJECT_TITLE (Number: $PROJECT_NUMBER)"
+    
+    # Create project fields
+    echo -e "\n${BLUE}Creating project fields...${NC}"
+    
+    # Status field with columns
+    gh project field-create $PROJECT_NUMBER \
+        --owner "$OWNER" \
+        --name "Status" \
+        --data-type "SINGLE_SELECT" \
+        --single-select-options "📋 Backlog,🎯 Sprint Ready,🚀 In Progress,👀 In Review,✅ Done"
+    
+    # Story Points field
+    gh project field-create $PROJECT_NUMBER \
+        --owner "$OWNER" \
+        --name "Story Points" \
+        --data-type "NUMBER"
+    
+    # Priority field
+    gh project field-create $PROJECT_NUMBER \
+        --owner "$OWNER" \
+        --name "Priority" \
+        --data-type "SINGLE_SELECT" \
+        --single-select-options "🔴 Critical,🟠 High,🟡 Medium,🟢 Low"
+    
+    # Sprint field
+    gh project field-create $PROJECT_NUMBER \
+        --owner "$OWNER" \
+        --name "Sprint" \
+        --data-type "TEXT"
+    
+    print_status "Project fields created"
+    
+    # Add all existing issues to the project
+    echo -e "\n${BLUE}Adding issues to project...${NC}"
+    
+    # Get all issue numbers
+    ISSUES=$(gh issue list --repo "$OWNER/$REPO" --json number -q '.[].number')
+    
+    for issue in $ISSUES; do
+        gh project item-add $PROJECT_NUMBER \
+            --owner "$OWNER" \
+            --url "https://github.com/$OWNER/$REPO/issues/$issue" 2>/dev/null && \
+        print_status "Added issue #$issue to project" || \
+        print_info "Issue #$issue already in project"
+    done
+    
+else
+    print_error "Failed to create project. It might already exist."
+    print_info "Trying to find existing project..."
+    
+    # Try to find existing project
+    PROJECT_NUMBER=$(gh project list --owner "$OWNER" --format json | jq -r '.projects[] | select(.title == "'$PROJECT_TITLE'") | .number')
+    
+    if [[ -n "$PROJECT_NUMBER" ]]; then
+        print_status "Found existing project: $PROJECT_TITLE (Number: $PROJECT_NUMBER)"
+    else
+        print_error "Could not find or create project"
+        exit 1
+    fi
+fi
 
 echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN}✨ GitHub setup complete!${NC}"
