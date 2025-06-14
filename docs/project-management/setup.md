@@ -2,6 +2,8 @@
 
 This guide covers the complete setup and integration of our project management tools: GitHub Projects, Notion, and ClickUp.
 
+> **✅ Status**: GitHub Project is set up and operational at [ChainLords Development Board](https://github.com/orgs/ThingyLingyGames/projects/1)
+
 ## 🛠️ Tool Overview
 
 | Tool | Purpose | Cost |

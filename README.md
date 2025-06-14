@@ -2,6 +2,10 @@
 
 A cross-chain idle strategy Web3 game built on Syscoin with multi-chain integration (Ethereum, Polygon).
 
+[![GitHub Issues](https://img.shields.io/github/issues/ThingyLingyGames/chainlords)](https://github.com/ThingyLingyGames/chainlords/issues)
+[![GitHub Project](https://img.shields.io/badge/Project-Board-blue)](https://github.com/orgs/ThingyLingyGames/projects/1)
+[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
+
 ## 🚀 Quick Start
 
 ```bash
@@ -40,6 +44,14 @@ chainlords/
 ## 📖 Documentation
 
 See the [docs](./docs) directory for detailed documentation.
+
+### Quick Links
+- 📋 [Project Board](https://github.com/orgs/ThingyLingyGames/projects/1)
+- 🎯 [Current Sprint](https://github.com/ThingyLingyGames/chainlords/milestone/1)
+- 📝 [Issues](https://github.com/ThingyLingyGames/chainlords/issues)
+- 🚀 [Getting Started Guide](./docs/development/getting-started.md)
+- 🏗️ [Architecture Overview](./docs/architecture/overview.md)
+- 🎮 [Game Design](./docs/game-design/mechanics/overview.md)
 
 ## 🤝 Contributing
 
